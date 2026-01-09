@@ -1,7 +1,7 @@
 // [AI-assisted] Modern Dashboard UI with Tailwind CSS
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Clock, AlertTriangle, CheckCircle, List, PlusCircle } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle, List, PlusCircle, Trash2 } from 'lucide-react';
 import TaskForm from './components/TaskForm';
 
 // [Human-written] State senkronizasyonu düzeltildi
@@ -15,14 +15,35 @@ function App() {
     } catch (err) { console.error("Veri çekme hatası:", err); }
   };
 
-  // [Human-written] Görev tamamlama mantığı manuel olarak eklendi
+  // [Human-fixed] Backend'den gelen mantıksal hataların yakalanması
   const handleToggleComplete = async (task) => {
     try {
       const newStatus = task.status === 'completed' ? 'todo' : 'completed';
       await axios.put(`http://localhost:5000/tasks/${task.id}`, { status: newStatus });
-      fetchTasks(); // Listeyi yenileyerek güncel durumu çekiyoruz
+      fetchTasks();
     } catch (err) {
-      console.error("Durum güncellenemedi:", err);
+      // Backend'den gelen spesifik hata mesajını (Örn: "Önce Görev 1 bitmeli") gösterir
+      if (err.response && err.response.data && err.response.data.error) {
+        alert(err.response.data.error);
+      } else {
+        alert("Durum güncellenirken bir hata oluştu.");
+      }
+    }
+  };
+
+  // [Human-written] Kullanıcı onaylı silme mekanizması
+  const handleDelete = async (id) => {
+    if (window.confirm("Bu görevi silmek istediğinize emin misiniz?")) {
+      try {
+        console.log(`Silme işlemi başlatılıyor... ID: ${id}`);
+        const res = await axios.delete(`http://localhost:5000/tasks/${id}`);
+        console.log("Silme başarılı:", res.status);
+        fetchTasks();
+      } catch (err) {
+        // Hatanın detayını konsola yazdırıyoruz (Network hatası mı, 500 mü?)
+        console.error("Silme hatası detayı:", err.response ? err.response.data : err.message);
+        alert("Görev silinirken bir hata oluştu. Detaylar konsolda.");
+      }
     }
   };
 
@@ -59,7 +80,7 @@ function App() {
             <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-slate-700">
               <PlusCircle size={20} className="text-indigo-600" /> Yeni Görev Ekle
             </h2>
-            <TaskForm onTaskAdded={fetchTasks} />
+            <TaskForm tasks={tasks} onTaskAdded={fetchTasks} />
           </div>
         </div>
 
@@ -96,6 +117,12 @@ function App() {
                   >
                     <CheckCircle size={16} />
                     {t.status === 'completed' ? 'Tamamlandı (Geri Al)' : 'Tamamlandı Olarak İşaretle'}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(t.id)}
+                    className="text-sm font-bold text-red-500 hover:text-red-700 flex items-center gap-1 transition-colors"
+                  >
+                    <Trash2 size={16} /> Sil
                   </button>
                 </div>
               </div>

@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const TaskForm = ({ onTaskAdded }) => {
+const TaskForm = ({ tasks, onTaskAdded }) => {
     const [task, setTask] = useState({
         title: '',
         priority: 'medium',
         estimated_duration: '',
-        deadline: ''
+        deadline: '',
+        depends_on: ''
     });
 
     const handleSubmit = async (e) => {
@@ -61,7 +62,18 @@ const TaskForm = ({ onTaskAdded }) => {
                 className="w-full p-3 border border-slate-200 rounded-xl outline-none"
                 required
             />
-            {/* DİKKAT: type="submit" eklendi! */}
+            <label className="text-xs font-bold text-slate-500 uppercase">Öncül Görev (Bağımlılık)</label>
+            <select
+                value={task.depends_on}
+                onChange={(e) => setTask({ ...task, depends_on: e.target.value })}
+                className="w-full p-3 border border-slate-200 rounded-xl bg-white outline-none"
+            >
+                <option value="">Yok (Bağımsız Görev)</option>
+                {/* Eğer tasks undefined ise hata vermez, boş geçer */}
+                {tasks && tasks.map(t => (
+                    <option key={t.id} value={t.id}>{t.title}</option>
+                ))}
+            </select>
             <button
                 type="submit"
                 className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-100"
