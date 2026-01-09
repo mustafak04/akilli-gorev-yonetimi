@@ -1,36 +1,50 @@
+// [AI-assisted] Task Creation Form with Smart Validation
 import React, { useState } from 'react';
-import { hasCircularDependency } from '../utils/cycleChecker';
+import axios from 'axios';
 
-const TaskForm = ({ tasks, onTaskAdded }) => {
-    const [formData, setFormData] = useState({ title: '', priority: 'medium', estimated_duration: 1, deadline: '', depends_on: '' });
+const TaskForm = ({ onTaskAdded }) => {
+    const [task, setTask] = useState({
+        title: '',
+        priority: 'medium',
+        estimated_duration: '',
+        deadline: ''
+    });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // MÜHENDİS MÜDAHALESİ: YZ'nin atladığı döngü kontrolü
-        if (formData.depends_on && hasCircularDependency(tasks, "new", parseInt(formData.depends_on))) {
-            alert("Hata: Döngüsel bağımlılık tespit edildi! (A -> B -> A olamaz)");
-            return;
+        try {
+            // Backend'e POST isteği gönder
+            const res = await axios.post('http://localhost:5000/tasks', task);
+            onTaskAdded(res.data); // Listeyi yenile
+            setTask({ title: '', priority: 'medium', estimated_duration: '', deadline: '' });
+        } catch (err) {
+            alert("Görev eklenirken hata oluştu.");
         }
-
-        // API isteği burada yapılacak (Basitleştirilmiştir)
-        console.log("Görev kaydediliyor...", formData);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
-            {/* Form alanları: Title, Priority, Duration, Deadline, Dependencies */}
-            <h2 className="text-xl font-semibold mb-4">Yeni Akıllı Görev Ekle</h2>
-            <input
-                className="w-full mb-3 p-2 border rounded"
-                placeholder="Görev Başlığı"
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-            />
-            {/* Diğer inputlar buraya gelecek... */}
-            <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-                Analiz Et ve Ekle
-            </button>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-xl font-bold mb-4">Yeni Görev Ekle</h2>
+            <div className="grid grid-cols-1 gap-4">
+                <input type="text" placeholder="Görev Başlığı" value={task.title}
+                    onChange={(e) => setTask({ ...task, title: e.target.value })} className="border p-2 rounded" required />
+
+                <select value={task.priority} onChange={(e) => setTask({ ...task, priority: e.target.value })} className="border p-2 rounded">
+                    <option value="low">Düşük Öncelik</option>
+                    <option value="medium">Orta Öncelik</option>
+                    <option value="high">Yüksek Öncelik</option>
+                </select>
+
+                <input type="number" placeholder="Tahmini Süre (Saat)" value={task.estimated_duration}
+                    onChange={(e) => setTask({ ...task, estimated_duration: e.target.value })} className="border p-2 rounded" required />
+
+                <input type="datetime-local" value={task.deadline}
+                    onChange={(e) => setTask({ ...task, deadline: e.target.value })} className="border p-2 rounded" required />
+
+                <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold">
+                    Analiz Et ve Sisteme Ekle
+                </button>
+            </div>
         </form>
     );
 };

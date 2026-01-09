@@ -46,7 +46,7 @@ app.get('/tasks', async (req, res) => {
     }
 });
 
-// Yeni Görev Ekleme [cite: 89]
+// Yeni Görev Ekleme 
 app.post('/tasks', async (req, res) => {
     const { title, priority, estimated_duration, deadline } = req.body;
     try {
@@ -57,6 +57,21 @@ app.post('/tasks', async (req, res) => {
         res.status(201).json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: "Görev oluşturulamadı." });
+    }
+});
+
+// [AI-assisted] Görev Durumunu Güncelleme (Tamamlama)
+app.put('/tasks/:id', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body; // 'todo' veya 'completed'
+    try {
+        const result = await pool.query(
+            'UPDATE tasks SET status = $1 WHERE id = $2 RETURNING *',
+            [status, id]
+        );
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: "Güncelleme sırasında hata oluştu." });
     }
 });
 
