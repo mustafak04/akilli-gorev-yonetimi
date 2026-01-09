@@ -6,3 +6,5 @@
 | **Akıllı Mantık** | Gemini | Sadece teslim tarihine (deadline) bakılması. | **Kritik Yol & Slack Analizi** | Gecikme riskini gerçekçi ölçmek için bağımlı görevlerin sürelerinin de hesaba katılması gerekir. |
 | **Geliştirme (Risk Algoritması)** | Gemini | Sadece seçili görevin süresini hesaplayan bir fonksiyon. | **Rekürsif Zincir Analizi** | Ödev gereksinimlerinde belirtilen "bağımlılık ilişkilerini analiz etme"  kuralı için zincirleme süre hesabı eklendi. |
 | **Test / Geliştirme** | Gemini | Görevlerin sadece veritabanına kaydedilmesi. | **DFS Kontrolü Eklendi** | YZ, A->B ve B->A gibi döngüsel bağımlılıkların sistemi kilitleyeceğini fark edemedi (Hallucination/Eksiklik). Düzeltmek için cycleChecker dosyası eklendi. |
+| **Arayüz Tasarımı** | ChatGPT | Klasik tablo görünümü (Tabular view). | **Risk Odaklı Kart Yapısı** | Kullanıcının "Gecikme Riski" olan görevleri anında fark etmesi için renk kodlu (Red-Amber-Green) kart yapısı tercih edildi. |
+| **Validasyon** | Gemini | Sadece boş alan kontrolü (Required fields). | **Döngüsel Bağımlılık Kontrolü** | YZ'nin atladığı mantıksal hata (circular dependency) cycleChecker ile frontend seviyesinde engellendi. |
