@@ -1,0 +1,2 @@
+# akilli-gorev-yonetimi
+
