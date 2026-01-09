@@ -1,17 +1,13 @@
-## AI Decision Log 
-| Aşama | Kullanılan YZ | YZ Önerisi | Nihai Karar | Gerekçe |
+# AI Decision Log (Yapay Zeka Karar Günlüğü)
+
+Bu günlük, projenin geliştirilme sürecinde Yapay Zeka tarafından sunulan öneriler ile mühendislik refleksiyle verilen nihai kararlar arasındaki farkları ve gerekçeleri dökümante eder.
+
+| Aşama | Kullanılan YZ | YZ Önerisi | Nihai Karar (İnsan) | Gerekçe / Analiz |
 | :--- | :--- | :--- | :--- | :--- |
-| **Teknoloji Seçimi** | Gemini | Veri esnekliği için MongoDB (NoSQL) kullanımı. | **PostgreSQL (Supabase)** | Görev bağımlılıkları (Task Dependencies) ilişkisel bir yapı gerektirir. "JOIN" işlemleri ve veri bütünlüğü için SQL daha güvenlidir. |
-| **Mimari Yaklaşım** | ChatGPT | Monolitik (Tek parça) yapı. | **Client-Server (REST API)** | Web tabanlı gereksinim ve gelecekte mobil uygulama eklenebilme esnekliği için modülerlik sağlar. |
-| **Akıllı Mantık** | Gemini | Sadece teslim tarihine (deadline) bakılması. | **Kritik Yol & Slack Analizi** | Gecikme riskini gerçekçi ölçmek için bağımlı görevlerin sürelerinin de hesaba katılması gerekir. |
-| **Geliştirme (Risk Algoritması)** | Gemini | Sadece seçili görevin süresini hesaplayan bir fonksiyon. | **Rekürsif Zincir Analizi** | Ödev gereksinimlerinde belirtilen "bağımlılık ilişkilerini analiz etme"  kuralı için zincirleme süre hesabı eklendi. |
-| **Test / Geliştirme** | Gemini | Görevlerin sadece veritabanına kaydedilmesi. | **DFS Kontrolü Eklendi** | YZ, A->B ve B->A gibi döngüsel bağımlılıkların sistemi kilitleyeceğini fark edemedi (Hallucination/Eksiklik). Düzeltmek için cycleChecker dosyası eklendi. |
-| **Arayüz Tasarımı** | ChatGPT | Klasik tablo görünümü (Tabular view). | **Risk Odaklı Kart Yapısı** | Kullanıcının "Gecikme Riski" olan görevleri anında fark etmesi için renk kodlu (Red-Amber-Green) kart yapısı tercih edildi. |
-| **Validasyon** | Gemini | Sadece boş alan kontrolü (Required fields). | **Döngüsel Bağımlılık Kontrolü** | YZ'nin atladığı mantıksal hata (circular dependency) cycleChecker ile frontend seviyesinde engellendi. |
-| **Test (Birim Test)** | ChatGPT | Sadece başarılı senaryoların test edilmesi. | **Edge-case Testleri Eklendi** | YZ'nin atladığı negatif süre ve geçmiş tarihli deadline senaryoları manuel olarak testlere eklendi. |
-| **Test (Hata Yakalama)** | Gemini | Süresi '0' olan görevleri 'Düşük Risk' kabul eden test kodu. | **Hata Olarak Raporlandı** | Sıfır süreli görevlerin mantıksal hata olduğu saptandı; YZ çıktısı "hallucination" olarak değerlendirilip düzeltildi |
-| **Altyapı (Database)** | Gemini | Bulut tabanlı (Supabase) yönetilebilir veritabanı. | **Yerel (Local) PostgreSQL** | DNS çözümleme (ENOTFOUND) ve ağ gecikmesi sorunlarının akıllı algoritma testlerini aksatması nedeniyle yerel kuruluma geçildi. |
-| **Hata Yönetimi** | ChatGPT | Hatanın şifre kaynaklı olduğu varsayımı. | **Ağ Katmanı Analizi (Human Decision)** | Sorunun adres çözümleme (DNS) kaynaklı olduğu bir mühendis refleksiyle tespit edildi ve altyapı değişikliğine gidildi |
-| **Geliştirme (Algoritma)** | Gemini | Sadece teslim tarihine (deadline) odaklanan basit bir karşılaştırma. | **Ağırlıklı Risk Skoru (Human-modified)** | Sadece tarih yeterli değildir; tahmini süre ile kalan süre arasındaki oran projenin "akıllı davranış" gereksinimini karşılar. |
-| **Analiz (Gereksinim)** | ChatGPT | Görevlerin sadece listelenmesi. | **Bağımlılık Analizi Entegrasyonu** | Ödev dökümanındaki "Görevler arasında bağımlılık tanımlanabilmesi" maddesini (Madde 1.1) karşılamak için ilişkisel model tercih edildi |
-| **Geliştirme (UI)** | ChatGPT | Standart HTML form elementleri. | **Tailwind Destekli Dinamik Form** | Kullanıcı deneyimini (UX) artırmak ve "Akıllı Analiz" çıktılarını (Risk durumları) anlık gösterebilmek için |
+| **Veri Modelleme** | Gemini | MongoDB (NoSQL) kullanımı | **PostgreSQL (RDBMS)** | Görev bağımlılıklarının karmaşık JOIN ve Recursive sorgular gerektirmesi nedeniyle ilişkisel modelin veri bütünlüğü açısından daha güvenli olması. |
+| **Bağımlılık Yapısı** | ChatGPT | Görev tablosunda `parent_id` sütunu | **Bağımlılık Tablosu (Many-to-Many)** | Bir görevin birden fazla göreve bağlı olabileceği (Multi-dependency) senaryoların desteklenmesi ve normalizasyon kuralları. |
+| **Risk Analizi** | Gemini | Basit tarih karşılaştırması | **Ağırlıklı Slack Skoru Algoritması** | Sadece tarihin yetersiz kalması; görevin tahmini süresi ve mevcut zaman baskısının birleştirilerek daha gerçekçi bir analiz sunulması. |
+| **Validasyon** | ChatGPT | Sadece Frontend üzerinde kontrol | **Backend + DB Level Constraint** | Güvenlik ve veri tutarlılığı için kısıtlamaların sunucu seviyesinde olması zorunluluğu. API üzerinden yapılabilecek bypass işlemlerini engelleme. |
+| **UI Geliştirme** | Gemini | Statik Dashboard tasarımı | **Dynamic Component Architecture** | Tasarımın iyileştirilmesi sırasında asenkron veri akışının bozulmaması için işlevsel React bileşenlerinin korunarak arayüze monte edilmesi. |
+| **Durum Yönetimi** | Gemini | Manuel durum güncelleme | **Recursive Cascading Update** | Bir üst görev iptal edildiğinde alt görevlerin tamamlanmış kalmasının mantıksal bir hata olması; veri bütünlüğünün otomatik korunması. |
+| **Altyapı** | ChatGPT | Supabase Bulut Veritabanı | **Yerel (Local) PostgreSQL** | DNS çözümleme hataları ve internet bağımlılığının geliştirme sürecini aksatması nedeniyle daha stabil olan yerel kuruluma geçiş. |
