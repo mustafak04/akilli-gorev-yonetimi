@@ -10,3 +10,5 @@
 | **Validasyon** | Gemini | Sadece boş alan kontrolü (Required fields). | **Döngüsel Bağımlılık Kontrolü** | YZ'nin atladığı mantıksal hata (circular dependency) cycleChecker ile frontend seviyesinde engellendi. |
 | **Test (Birim Test)** | ChatGPT | Sadece başarılı senaryoların test edilmesi. | **Edge-case Testleri Eklendi** | YZ'nin atladığı negatif süre ve geçmiş tarihli deadline senaryoları manuel olarak testlere eklendi. |
 | **Test (Hata Yakalama)** | Gemini | Süresi '0' olan görevleri 'Düşük Risk' kabul eden test kodu. | **Hata Olarak Raporlandı** | Sıfır süreli görevlerin mantıksal hata olduğu saptandı; YZ çıktısı "hallucination" olarak değerlendirilip düzeltildi |
+| **Altyapı (Database)** | Gemini | Bulut tabanlı (Supabase) yönetilebilir veritabanı. | **Yerel (Local) PostgreSQL** | DNS çözümleme (ENOTFOUND) ve ağ gecikmesi sorunlarının akıllı algoritma testlerini aksatması nedeniyle yerel kuruluma geçildi. |
+| **Hata Yönetimi** | ChatGPT | Hatanın şifre kaynaklı olduğu varsayımı. | **Ağ Katmanı Analizi (Human Decision)** | Sorunun adres çözümleme (DNS) kaynaklı olduğu bir mühendis refleksiyle tespit edildi ve altyapı değişikliğine gidildi |

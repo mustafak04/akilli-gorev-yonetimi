@@ -39,7 +39,8 @@ app.get('/tasks', async (req, res) => {
         }));
         res.json(tasksWithRisk);
     } catch (err) {
-        res.status(500).json({ error: "Veri çekilemedi." });
+        console.error("DETAYLI HATA:", err); // Hatayı terminale yazdırır
+        res.status(500).json({ error: "Veri çekilemedi.", details: err.message });
     }
 });
 
