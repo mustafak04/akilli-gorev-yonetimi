@@ -8,3 +8,5 @@
 | **Test / Geliştirme** | Gemini | Görevlerin sadece veritabanına kaydedilmesi. | **DFS Kontrolü Eklendi** | YZ, A->B ve B->A gibi döngüsel bağımlılıkların sistemi kilitleyeceğini fark edemedi (Hallucination/Eksiklik). Düzeltmek için cycleChecker dosyası eklendi. |
 | **Arayüz Tasarımı** | ChatGPT | Klasik tablo görünümü (Tabular view). | **Risk Odaklı Kart Yapısı** | Kullanıcının "Gecikme Riski" olan görevleri anında fark etmesi için renk kodlu (Red-Amber-Green) kart yapısı tercih edildi. |
 | **Validasyon** | Gemini | Sadece boş alan kontrolü (Required fields). | **Döngüsel Bağımlılık Kontrolü** | YZ'nin atladığı mantıksal hata (circular dependency) cycleChecker ile frontend seviyesinde engellendi. |
+| **Test (Birim Test)** | ChatGPT | Sadece başarılı senaryoların test edilmesi. | **Edge-case Testleri Eklendi** | YZ'nin atladığı negatif süre ve geçmiş tarihli deadline senaryoları manuel olarak testlere eklendi. |
+| **Test (Hata Yakalama)** | Gemini | Süresi '0' olan görevleri 'Düşük Risk' kabul eden test kodu. | **Hata Olarak Raporlandı** | Sıfır süreli görevlerin mantıksal hata olduğu saptandı; YZ çıktısı "hallucination" olarak değerlendirilip düzeltildi |
